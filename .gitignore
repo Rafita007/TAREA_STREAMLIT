@@ -1,0 +1,29 @@
+# Archivos de macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Archivos de Windows
+Thumbs.db
+ehthumbs.db
+
+# Archivos de sistema de backup de macOS
+*.bak
+*.swp
+
+# Archivos de VS Code
+.vscode/
+
+# Archivos de JetBrains (IntelliJ, PhpStorm, PyCharm, WebStorm, etc.)
+.idea/
+
+# Archivos de sistemas operativos de backup en Windows
+Desktop.ini
+$RECYCLE.BIN/
+
+# Archivos temporales
+*.log
+*.tmp
+
+# Archivos de NPM
+node_modules/
