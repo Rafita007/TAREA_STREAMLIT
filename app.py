@@ -6,7 +6,7 @@ api_key = "sk-proj-_jUb4kRWH6nD7-ayO-rjCQ_os-sJFxL5Ho5V1TcXoWdiTB1fFAa01yj64aqWQ
 
 def analizar_respuestas(conversacion):
     client = openai.Client(api_key=api_key)
-    prompt = f"Eres un psicólogo virtual. Analiza la siguiente conversación y proporciona un resumen breve sobre la personalidad y estado emocional del usuario.\n\nConversación:\n{conversacion}\n\nResultado:"
+    prompt = f"Eres un psicólogo virtual. Analiza la siguiente conversación y proporciona un resumen breve sobre la personalidad y estado emocional del usuario. Responde de manera natural y lo más humano posible\n\nConversación:\n{conversacion}\n\nResultado:"
     
     respuesta = client.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -20,7 +20,7 @@ def analizar_respuestas(conversacion):
 st.title("🧠 Psicólogo Virtual")
 st.write("Habla con el psicólogo virtual y recibe un análisis sobre tu estado emocional.")
 
-historial = st.text_area("Escribe sobre cómo te sientes hoy:")
+historial = st.text_area("Escribe aquí:")
 
 if st.button("Obtener Análisis"):
     if historial.strip():
