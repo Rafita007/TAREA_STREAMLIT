@@ -1,38 +1,32 @@
 import streamlit as st
-import requests
+import openai
 
-def obtener_clima(ciudad):
-    url = f"https://wttr.in/{ciudad}?format=%t"
-    respuesta = requests.get(url)
-    if respuesta.status_code == 200:
-        try:
-            temperatura = int(respuesta.text.replace("°C", "").strip())
-            return temperatura
-        except ValueError:
-            return None
-    else:
-        return None
-
-def obtener_recomendacion(temperatura):
-    from openai import OpenAI
-    cliente = OpenAI(api_key="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")
-    prompt = f"La temperatura es {temperatura}°C. ¿Cómo debería vestirme?"
-    respuesta = cliente.chat.completions.create(
+def analizar_respuestas(conversacion, api_key):
+    prompt = f"""
+    Eres un psicólogo virtual. Analiza la siguiente conversación y proporciona un resumen breve sobre la personalidad y estado emocional del usuario.
+    Conversación:
+    {conversacion}
+    Resultado:
+    """
+    
+    respuesta = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}]
+        messages=[{"role": "system", "content": "Eres un psicólogo virtual empático y analítico."},
+                  {"role": "user", "content": prompt}],
+        api_key=api_key
     )
-    return respuesta.choices[0].message.content
+    return respuesta["choices"][0]["message"]["content"]
 
-st.title("Asesor de Vestimenta según el Clima")
-ciudad = st.text_input("Ingresa tu ciudad:")
+st.title("🧠 Psicólogo Virtual")
+st.write("Habla con el psicólogo virtual y recibe un análisis sobre tu estado emocional.")
 
-if st.button("Obtener Clima y Recomendación"):
-    temperatura = obtener_clima(ciudad)
-    if temperatura is not None:
-        recomendacion = obtener_recomendacion(temperatura)
-        
-        st.write(f"### Clima en {ciudad}")
-        st.write(f"**Temperatura:** {temperatura}°C")
-        st.write(f"**Recomendación:** {recomendacion}")
+api_key = "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"  # Reemplázala con tu API Key de OpenAI
+historial = st.text_area("Escribe sobre cómo te sientes hoy:")
+
+if st.button("Obtener Análisis"):
+    if historial.strip():
+        resultado = analizar_respuestas(historial, api_key)
+        st.subheader("📝 Análisis del Psicólogo Virtual")
+        st.write(resultado)
     else:
-        st.error("No se pudo obtener el clima. Verifica el nombre de la ciudad.")
+        st.error("Por favor, escribe algo para analizar.")
