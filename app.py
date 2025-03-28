@@ -1,9 +1,12 @@
 import streamlit as st
 import openai
 
-def analizar_respuestas(conversacion, api_key):
+# Define tu API Key aquí
+api_key = "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"
+
+def analizar_respuestas(conversacion):
     client = openai.Client(api_key=api_key)
-    prompt = f"Eres un psicólogo virtual. Analiza la siguiente conversación y proporciona un resumen breve sobre la personalidad y estado emocional del usuario.\n\nConversación:\n{conversacion}\n\nResultado:"  
+    prompt = f"Eres un psicólogo virtual. Analiza la siguiente conversación y proporciona un resumen breve sobre la personalidad y estado emocional del usuario.\n\nConversación:\n{conversacion}\n\nResultado:"
     
     respuesta = client.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -17,12 +20,11 @@ def analizar_respuestas(conversacion, api_key):
 st.title("🧠 Psicólogo Virtual")
 st.write("Habla con el psicólogo virtual y recibe un análisis sobre tu estado emocional.")
 
-api_key = st.secrets["openai_api_key"]  # Asegúrate de configurar tu clave en Streamlit Secrets
 historial = st.text_area("Escribe sobre cómo te sientes hoy:")
 
 if st.button("Obtener Análisis"):
     if historial.strip():
-        resultado = analizar_respuestas(historial, api_key)
+        resultado = analizar_respuestas(historial)
         st.subheader("📝 Análisis del Psicólogo Virtual")
         st.write(resultado)
     else:
