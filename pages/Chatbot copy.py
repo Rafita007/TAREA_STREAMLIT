@@ -6,7 +6,7 @@ from openai import OpenAI
 
 # 🔑 Recuperar la API Key de los secretos de Streamlit Cloud
 #API_KEY = st.secrets["OPENAI_API_KEY"]
-API_KEY = st.secrets.OPENAI_API_KEY
+API_KEY = st.secrets["general"]["OPENAI_API_KEY"]
 
 # Crear el cliente de OpenAI con la API Key
 client = OpenAI(api_key=API_KEY)

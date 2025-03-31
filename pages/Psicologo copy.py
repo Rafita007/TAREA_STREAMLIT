@@ -2,7 +2,7 @@ import streamlit as st
 import openai
 
 # Define tu API Key aquí
-api_key = st.secrets["OPENAI_API_KEY"]
+API_KEY = st.secrets["general"]["OPENAI_API_KEY"]
 
 def analizar_respuestas(conversacion):
     client = openai.Client(api_key=api_key)
