@@ -19,31 +19,28 @@ def extraer_texto_pdf(pdf_file):
         texto += pagina.extract_text() + "\n"
     return texto
 
-# 📌 Función para generar respuestas con OpenAI
+# 📌 Función para generar respuestas con OpenAI en streaming
 def generar_respuesta(mensaje, contexto=""):
-    respuesta = ""
     try:
-        # Llamada correcta a la API sin openai.Client()
+        respuesta = ""
         response = openai.ChatCompletion.create(
             model="gpt-4-turbo",
             messages=[
                 {"role": "system", "content": "Eres un asistente experto en análisis de documentos."},
                 {"role": "user", "content": f"Contexto: {contexto}\n\nPregunta: {mensaje}"}
             ],
-            stream=True  # Habilitar streaming
+            stream=True  # Activar respuesta en streaming
         )
 
-        # Procesar la respuesta correctamente
         for chunk in response:
             if "choices" in chunk and chunk["choices"]:
                 delta = chunk["choices"][0].get("delta", {})
                 if "content" in delta:
                     respuesta += delta["content"]
-                    yield delta["content"]  # Enviar respuesta en tiempo real
+                    yield delta["content"]  # Enviar la respuesta en partes
     except Exception as e:
         st.error(f"❌ Error en la API: {str(e)}")
-    
-    return respuesta
+        return ""
 
 # 📌 Inicializar estados de sesión
 if "historial" not in st.session_state:
@@ -70,11 +67,13 @@ if ingreso_usuario:
     with st.chat_message("user"):
         st.markdown(ingreso_usuario)
     
-    # 📌 Obtener la respuesta del chatbot con contexto del PDF
+    # 📌 Mostrar respuesta en tiempo real
     respuesta_bot = ""
     with st.chat_message("assistant"):
         respuesta_area = st.empty()
-        respuesta_bot = generar_respuesta(ingreso_usuario, st.session_state.contexto)
-        respuesta_area.markdown(respuesta_bot)
+        
+        for texto_parcial in generar_respuesta(ingreso_usuario, st.session_state.contexto):
+            respuesta_bot += texto_parcial
+            respuesta_area.markdown(respuesta_bot)  # Actualiza la respuesta en tiempo real
     
     st.session_state.historial.append({"role": "assistant", "content": respuesta_bot})
