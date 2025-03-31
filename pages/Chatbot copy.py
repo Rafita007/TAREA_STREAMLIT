@@ -4,10 +4,11 @@ import os
 import PyPDF2
 from openai import OpenAI
 
-# 🔑 Define aquí tu API Key de OpenAI (reemplázala con la tuya)
+# 🔑 Recuperar la API Key de los secretos de Streamlit Cloud
 API_KEY = st.secrets["OPENAI_API_KEY"]
 
-client = OpenAI(api_key=API_KEY)  # Crear el cliente de OpenAI con la API Key
+# Crear el cliente de OpenAI con la API Key
+client = OpenAI(api_key=API_KEY)
 
 st.title("📄 Chatbot con OpenAI y RAG")
 
