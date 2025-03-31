@@ -17,26 +17,26 @@ def extraer_texto_pdf(pdf_file):
         texto += pagina.extract_text() + "\n"
     return texto
 
-# 📌 Función para generar respuestas con OpenAI en streaming
+# 📌 Función para generar respuestas con OpenAI
 def generar_respuesta(mensaje, contexto=""):
     try:
-        respuesta = ""
-        # Nueva manera de usar la API a partir de openai >= 1.0.0
-        response = openai.chat_completions.create(
-            model="gpt-4-turbo",  # Usar el modelo adecuado
+        # Usar openai.ChatCompletion.create() para las versiones nuevas de la API
+        response = openai.ChatCompletion.create(
+            model="gpt-4-turbo",  # Usar el modelo adecuado, puede ser gpt-3.5-turbo o gpt-4-turbo
             messages=[
                 {"role": "system", "content": "Eres un asistente experto en análisis de documentos."},
                 {"role": "user", "content": f"Contexto: {contexto}\n\nPregunta: {mensaje}"}
             ],
-            stream=True  # Activar respuesta en streaming
+            stream=True  # Activar streaming
         )
 
+        respuesta = ""
         for chunk in response:
             if "choices" in chunk and chunk["choices"]:
                 delta = chunk["choices"][0].get("delta", {})
                 if "content" in delta:
                     respuesta += delta["content"]
-                    yield delta["content"]  # Enviar la respuesta en partes
+                    yield delta["content"]  # Generar la respuesta en partes
     except Exception as e:
         st.error(f"❌ Error en la API: {str(e)}")
         return ""
