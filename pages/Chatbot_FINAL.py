@@ -28,7 +28,7 @@ def generar_respuesta(mensaje, contexto=""):
         completion = client.chat.completions.create(  # Usando el nuevo método correcto
             model="gpt-4",  # Usa el modelo adecuado
             messages=[
-                {"role": "system", "content": "Eres un asistente experto en análisis de documentos."},
+                {"role": "system", "content": "Eres un asistente experto que responde todas las preguntas."},
                 {"role": "user", "content": f"Contexto: {contexto}\n\nPregunta: {mensaje}"}
             ]
         )
