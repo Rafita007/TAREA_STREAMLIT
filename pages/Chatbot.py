@@ -5,6 +5,9 @@ import PyPDF2
 
 # 🔑 Define aquí tu API Key de OpenAI (reemplázala con la tuya)
 API_KEY = "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"
+
+
+# Configurar la API Key
 openai.api_key = API_KEY
 
 st.title("📄 Chatbot con OpenAI y RAG")
@@ -20,23 +23,15 @@ def extraer_texto_pdf(pdf_file):
 # 📌 Función para generar respuestas con OpenAI
 def generar_respuesta(mensaje, contexto=""):
     try:
-        # Usar openai.ChatCompletion.create() para las versiones nuevas de la API
-        response = openai.ChatCompletion.create(
-            model="gpt-4-turbo",  # Usar el modelo adecuado, puede ser gpt-3.5-turbo o gpt-4-turbo
-            messages=[
-                {"role": "system", "content": "Eres un asistente experto en análisis de documentos."},
-                {"role": "user", "content": f"Contexto: {contexto}\n\nPregunta: {mensaje}"}
-            ],
-            stream=True  # Activar streaming
+        # Usar openai.completions.create() para la nueva versión
+        response = openai.completions.create(
+            model="gpt-4-turbo",  # Usa el modelo adecuado
+            prompt=f"Contexto: {contexto}\n\nPregunta: {mensaje}",
+            max_tokens=150  # Puedes ajustar los parámetros según tus necesidades
         )
 
-        respuesta = ""
-        for chunk in response:
-            if "choices" in chunk and chunk["choices"]:
-                delta = chunk["choices"][0].get("delta", {})
-                if "content" in delta:
-                    respuesta += delta["content"]
-                    yield delta["content"]  # Generar la respuesta en partes
+        respuesta = response['choices'][0]['text']  # Obtener la respuesta
+        return respuesta
     except Exception as e:
         st.error(f"❌ Error en la API: {str(e)}")
         return ""
@@ -66,13 +61,11 @@ if ingreso_usuario:
     with st.chat_message("user"):
         st.markdown(ingreso_usuario)
     
-    # 📌 Mostrar respuesta en tiempo real
+    # 📌 Obtener la respuesta del chatbot con contexto del PDF
     respuesta_bot = ""
     with st.chat_message("assistant"):
         respuesta_area = st.empty()
-        
-        for texto_parcial in generar_respuesta(ingreso_usuario, st.session_state.contexto):
-            respuesta_bot += texto_parcial
-            respuesta_area.markdown(respuesta_bot)  # Actualiza la respuesta en tiempo real
+        respuesta_bot = generar_respuesta(ingreso_usuario, st.session_state.contexto)
+        respuesta_area.markdown(respuesta_bot)
     
     st.session_state.historial.append({"role": "assistant", "content": respuesta_bot})
