@@ -23,15 +23,21 @@ def extraer_texto_pdf(pdf_file):
 # 📌 Función para generar respuestas con OpenAI
 def generar_respuesta(mensaje, contexto=""):
     try:
-        # Usar openai.completions.create() para la nueva versión
-        response = openai.completions.create(
+        # Usar openai.ChatCompletion.create() con el endpoint correcto
+        response = openai.ChatCompletion.create(
             model="gpt-4-turbo",  # Usa el modelo adecuado
-            prompt=f"Contexto: {contexto}\n\nPregunta: {mensaje}",
-            max_tokens=150  # Puedes ajustar los parámetros según tus necesidades
+            messages=[
+                {"role": "system", "content": "Eres un asistente experto en análisis de documentos."},
+                {"role": "user", "content": f"Contexto: {contexto}\n\nPregunta: {mensaje}"}
+            ],
+            stream=True  # Activa el streaming
         )
 
-        respuesta = response['choices'][0]['text']  # Obtener la respuesta
+        respuesta = ""
+        for chunk in response['choices']:
+            respuesta += chunk['delta'].get('content', '')  # Obtener la respuesta
         return respuesta
+
     except Exception as e:
         st.error(f"❌ Error en la API: {str(e)}")
         return ""
