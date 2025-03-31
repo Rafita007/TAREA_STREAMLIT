@@ -2,9 +2,12 @@ import streamlit as st
 import openai
 import os
 import PyPDF2
+from openai import OpenAI
 
 # 🔑 Define aquí tu API Key de OpenAI (reemplázala con la tuya)
 API_KEY = "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"
+
+client = OpenAI(api_key=API_KEY)  # Crear el cliente de OpenAI con la API Key
 
 st.title("📄 Chatbot con OpenAI y RAG")
 
@@ -19,8 +22,8 @@ def extraer_texto_pdf(pdf_file):
 # 📌 Función para generar respuestas con OpenAI
 def generar_respuesta(mensaje, contexto=""):
     try:
-        # Usar el método adecuado de la nueva versión de la API (openai.ChatCompletion.create)
-        response = openai.ChatCompletion.create(  # Usando el método correcto
+        # Usamos el método adecuado con el cliente OpenAI
+        completion = client.chat.completions.create(  # Usando el nuevo método correcto
             model="gpt-4",  # Usa el modelo adecuado
             messages=[
                 {"role": "system", "content": "Eres un asistente experto en análisis de documentos."},
@@ -29,7 +32,7 @@ def generar_respuesta(mensaje, contexto=""):
         )
 
         # Obtener la respuesta del modelo correctamente
-        respuesta = response['choices'][0]['message']['content']
+        respuesta = completion.choices[0].message.content
         return respuesta
 
     except Exception as e:
