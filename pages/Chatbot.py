@@ -6,8 +6,6 @@ import PyPDF2
 # 🔑 Define aquí tu API Key de OpenAI (reemplázala con la tuya)
 API_KEY = "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"
 
-
-# Configurar la API Key
 openai.api_key = API_KEY
 
 st.title("📄 Chatbot con OpenAI y RAG")
@@ -23,19 +21,17 @@ def extraer_texto_pdf(pdf_file):
 # 📌 Función para generar respuestas con OpenAI
 def generar_respuesta(mensaje, contexto=""):
     try:
-        # Usar openai.ChatCompletion.create() con el endpoint correcto
-        response = openai.ChatCompletion.create(
-            model="gpt-4-turbo",  # Usa el modelo adecuado
+        # Usar el método adecuado de la nueva versión de la API (openai.ChatCompletion.create no es válido en >=1.0.0)
+        response = openai.chat.completions.create(  # Cambiado para la nueva API
+            model="gpt-4",  # Usa el modelo adecuado
             messages=[
                 {"role": "system", "content": "Eres un asistente experto en análisis de documentos."},
                 {"role": "user", "content": f"Contexto: {contexto}\n\nPregunta: {mensaje}"}
-            ],
-            stream=True  # Activa el streaming
+            ]
         )
 
-        respuesta = ""
-        for chunk in response['choices']:
-            respuesta += chunk['delta'].get('content', '')  # Obtener la respuesta
+        # Obtener la respuesta del modelo
+        respuesta = response['choices'][0]['message']['content']
         return respuesta
 
     except Exception as e:
