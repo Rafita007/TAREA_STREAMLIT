@@ -5,8 +5,6 @@ import PyPDF2
 
 # 🔑 Define aquí tu API Key de OpenAI (reemplázala con la tuya)
 API_KEY = "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"
-
-# Configurar la API Key
 openai.api_key = API_KEY
 
 st.title("📄 Chatbot con OpenAI y RAG")
@@ -23,8 +21,9 @@ def extraer_texto_pdf(pdf_file):
 def generar_respuesta(mensaje, contexto=""):
     try:
         respuesta = ""
-        response = openai.ChatCompletion.create(
-            model="gpt-4-turbo",
+        # Nueva manera de usar la API a partir de openai >= 1.0.0
+        response = openai.chat_completions.create(
+            model="gpt-4-turbo",  # Usar el modelo adecuado
             messages=[
                 {"role": "system", "content": "Eres un asistente experto en análisis de documentos."},
                 {"role": "user", "content": f"Contexto: {contexto}\n\nPregunta: {mensaje}"}
