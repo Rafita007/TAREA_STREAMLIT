@@ -23,20 +23,24 @@ def extraer_texto_pdf(pdf_file):
 def generar_respuesta(mensaje, contexto=""):
     respuesta = ""
     try:
-        client = openai.Client(api_key=API_KEY)  # Usa la API Key
-        response = client.chat.completions.create(
-            model="gpt-4-turbo",  # Usa el modelo adecuado
+        # Llamada correcta a la API sin openai.Client()
+        response = openai.ChatCompletion.create(
+            model="gpt-4-turbo",
             messages=[
                 {"role": "system", "content": "Eres un asistente experto en análisis de documentos."},
                 {"role": "user", "content": f"Contexto: {contexto}\n\nPregunta: {mensaje}"}
             ],
-            stream=True  # Activa el streaming
+            stream=True  # Habilitar streaming
         )
 
+        # Procesar la respuesta correctamente
         for chunk in response:
-            if chunk.choices:
-                respuesta += chunk.choices[0].delta.get("content", "")
-    except openai.OpenAIError as e:
+            if "choices" in chunk and chunk["choices"]:
+                delta = chunk["choices"][0].get("delta", {})
+                if "content" in delta:
+                    respuesta += delta["content"]
+                    yield delta["content"]  # Enviar respuesta en tiempo real
+    except Exception as e:
         st.error(f"❌ Error en la API: {str(e)}")
     
     return respuesta
