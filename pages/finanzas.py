@@ -5,7 +5,7 @@ import pandas as pd
 from scipy.stats import norm
 import matplotlib.pyplot as plt
 import datetime
-
+#a
 # Configurar la página
 st.set_page_config(page_title="VaR y CVaR de Portafolio", layout="wide")
 st.title("📉 Análisis de Riesgo: VaR y CVaR de un Portafolio de Acciones")
