@@ -8,3 +8,4 @@ plotly
 openai
 pypdf2
 python-dotenv
+yfinance
