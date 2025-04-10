@@ -9,4 +9,5 @@ openai
 pypdf2
 python-dotenv
 yfinance
+scipy
 #Libs
